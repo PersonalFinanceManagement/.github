@@ -28,3 +28,80 @@ a system to manage personal finance and solve / answer these questions.
   - **V4** - Polish the application, monitor it have plugin support to send out emails, alerts, etc when targets are met. Basically  have plugins as a support, ex. emails, reports, charts etc.
 
   - **V5** - Market it for others to use and get feedback on architecture and learn.
+
+
+
+### Architecture for BE
+Collecting workspace information# Understanding the Flow with Examples
+
+Let's break down the architecture using two use cases:
+
+## Use Case 1: Creating an Expense Transaction
+
+### Flow:
+1. **CLI Input** (`cli/internal/ports/cmd/`) - User enters:
+```sh
+finance-cli expense add -amount 50 -category food -from wallet
+```
+
+2. **Port Layer** (`cli/internal/ports/handlers/`)
+- Validates input
+- Converts CLI args to domain objects
+
+3. **Application Layer** (`cli/internal/app/service/`)
+- Orchestrates the flow
+- Calls domain services
+- Handles transaction atomicity
+
+4. **Domain Layer** (`domain/`)
+- Contains business logic
+- Validates business rules
+- Example: Checks if wallet has sufficient balance
+
+5. **Adapter Layer** (`cli/internal/adapters/`)
+- Implements storage interface
+- Saves transaction to persistent storage
+
+## Use Case 2: Savings Transfer
+
+### Flow:
+```sh
+finance-cli transfer -from checking -to savings -amount 1000
+```
+
+### Interface Examples:
+
+```go
+// domain/repository/interfaces.go
+type TransactionRepository interface {
+    SaveTransaction(Transaction) error
+    GetBalance(accountID string) (decimal.Decimal, error)
+}
+
+// domain/service/finance.go
+type TransactionService interface {
+    CreateExpense(amount, category, wallet string) error
+    TransferBetweenAccounts(from, to, amount string) error
+}
+```
+
+### Key Points:
+1. **Domain Layer**:
+   - Define core entities (Transaction, Account, Category)
+   - Define repository interfaces
+   - Contains business rules
+
+2. **Ports Layer**:
+   - CLI command definitions
+   - Input validation
+   - Request/Response DTOs
+
+3. **Application Layer**:
+   - Uses domain services
+   - Orchestrates workflow
+   - Transaction management
+
+4. **Adapters Layer**:
+   - Implements repository interfaces
+   - Handles storage details (file/DB)
+   - Converts domain objects to storage format
