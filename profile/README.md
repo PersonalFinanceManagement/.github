@@ -7,10 +7,10 @@ The main goal of this organization and its repo with the following goals in mind
   - simple and easy to use
 a system to manage personal finance and solve / answer these questions.
   1. whats the monthly spend?
-  2. whats the savings done towards the kid?
+  2. Can i set some goals, like buying a car/bike etc and save towards it?
   3. whats the income  vs spend vs saving ratio? 
-  4. How soon can i save funds for a target expenditure?
-  5. Can i set some goals, like buying a car/bike etc and save towards it?
+  4. How soon can i save funds for a target expenditure - timeline?
+  5. whats the savings done towards the goals/targets?
   6. Whats my monthly burn based on cateogries like
      - food
      - travel
@@ -32,7 +32,8 @@ a system to manage personal finance and solve / answer these questions.
 
 
 ### Architecture for BE
-Collecting workspace information# Understanding the Flow with Examples
+Reference: Url - (Architecture Overview)[https://threedots.tech/tags/clean-architecture/]
+
 
 Let's break down the architecture using two use cases:
 
@@ -62,28 +63,6 @@ finance-cli expense add -amount 50 -category food -from wallet
 - Implements storage interface
 - Saves transaction to persistent storage
 
-## Use Case 2: Savings Transfer
-
-### Flow:
-```sh
-finance-cli transfer -from checking -to savings -amount 1000
-```
-
-### Interface Examples:
-
-```go
-// domain/repository/interfaces.go
-type TransactionRepository interface {
-    SaveTransaction(Transaction) error
-    GetBalance(accountID string) (decimal.Decimal, error)
-}
-
-// domain/service/finance.go
-type TransactionService interface {
-    CreateExpense(amount, category, wallet string) error
-    TransferBetweenAccounts(from, to, amount string) error
-}
-```
 
 ### Key Points:
 1. **Domain Layer**:
